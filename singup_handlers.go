@@ -14,7 +14,7 @@ func singUpHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response = validateRequestValuesFormatt(request)
+	response = validateRequestValuesFormat(request)
 	if response != nil {
 		response.Send(w)
 		return

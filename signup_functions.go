@@ -9,7 +9,7 @@ import (
 	"github.com/jhuygens/security"
 )
 
-func validateRequestValuesFormatt(request signUpRequest) apirest.Response {
+func validateRequestValuesFormat(request signUpRequest) apirest.Response {
 	errorTitle := "Parametro inválido"
 	if !validateEmailFormat(request.Email) {
 		return apirest.Error{
@@ -35,17 +35,12 @@ func validateRequestValuesFormatt(request signUpRequest) apirest.Response {
 			Message: "El nombre de tu applicación debe tener al menos 6 caracteres",
 		}
 	}
-	// if len(request.RedirectUrls) == 0 {
-	// 	return apirest.Error{
-	// 		Title:   errorTitle,
-	// 		Message: "Debes ingresar al menos una url",
-	// 	}
-	// }
 	return nil
 }
 
 func validateEmailFormat(email string) bool {
-	var validID = regexp.MustCompile(`^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`)
+	emailLayout := `^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`
+	validID := regexp.MustCompile(emailLayout)
 	return validID.MatchString(email)
 }
 
