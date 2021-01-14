@@ -7,28 +7,26 @@ import (
 )
 
 func singUpHandler(w http.ResponseWriter, r *http.Request) {
-	eventID, response := apirest.GetHeaderValueString("EventID", r)
+	var request signUpRequest
+	response := apirest.UnmarshalBody(&request, r)
 	if response != nil {
 		response.Send(w)
 		return
 	}
 
-	go setEventID(eventID)
-
-	var requestObject signUpRequest
-	response = apirest.UnmarshalBody(&requestObject, r)
+	response = validateRequestValuesFormatt(request)
 	if response != nil {
 		response.Send(w)
 		return
 	}
 
-	response = requestObject.ValidateRequestValuesFormatt()
+	response = validateUserCreated(request.Email)
 	if response != nil {
 		response.Send(w)
 		return
 	}
 
-	response = signUp(requestObject)
+	response = signUp(request)
 	response.Send(w)
 	return
 }

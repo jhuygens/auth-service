@@ -12,13 +12,8 @@ import (
 
 var (
 	defaultSecretExpire = config.GetInt("general.default_secret_expire")
-	// EventID doc ...
-	additionalInfo = `{\"service\":\"auth-service\",\"event_id\":\"\"}`
+	defaultTokenExpire  = config.GetInt("general.default_token_expire")
 )
-
-func init() {
-	log.OverrideConfig(log.LstdDevFlags, log.LstdProdFlags|log.Linfo, &additionalInfo)
-}
 
 func main() {
 	router := mux.NewRouter()
@@ -26,13 +21,11 @@ func main() {
 	middlewares := apirest.MiddlewaresChain(apirest.ContentExtractor)
 
 	router.HandleFunc("/v1/signup", middlewares(singUpHandler)).Methods(http.MethodPost)
+	router.HandleFunc("/v1/reset_secret", middlewares(singUpHandler)).Methods(http.MethodPost)
+	router.HandleFunc("/v1/token", middlewares(singUpHandler)).Methods(http.MethodPost)
 
 	log.Info("Starting server, lisen on port: ", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%v", port), router); err != nil {
 		log.Panic(err)
 	}
-}
-
-func setEventID(eventID string) {
-	additionalInfo = `{\"project\":\"jhuygens\",\"service\":\"auth-service\",\"event_id\":\"` + eventID + `\"}`
 }
