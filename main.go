@@ -8,6 +8,7 @@ import (
 	"github.com/jgolang/apirest"
 	"github.com/jgolang/config"
 	"github.com/jgolang/log"
+	_ "github.com/jhuygens/db-mongodb/users"
 	"github.com/jhuygens/security"
 )
 
@@ -19,6 +20,8 @@ var (
 )
 
 func main() {
+	log.Info(config.GetString("database.name"))
+	log.Info(config.GetString("database.collections.users"))
 	router := mux.NewRouter()
 	port := config.GetInt("services.auth.port")
 	apirest.CustomTokenValidatorFunc = security.ValidateAccessTokenFunc

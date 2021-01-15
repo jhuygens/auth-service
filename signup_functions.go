@@ -53,17 +53,8 @@ func validatePasswordFormat(password string) bool {
 
 func validateUserCreated(email string) apirest.Response {
 	errorTitle := "Usuario no registrado"
-	user, err := users.GetByEmail(email)
-	if err != nil {
-		log.Error(err)
-		return apirest.Error{
-			Title:      errorTitle,
-			Message:    "No es posible registrar al usuario en estos momentos, por favor intenta más tarde",
-			ErrorCode:  "5",
-			StatusCode: http.StatusInternalServerError,
-		}
-	}
-	if user.ID != 0 {
+	user, _ := users.GetByEmail(email)
+	if user != nil {
 		return apirest.Error{
 			Title:   errorTitle,
 			Message: "Ya existe un usuario registrado con ese correo electronico",
@@ -158,9 +149,9 @@ func resetSecret(request resetClientSecretRequest) apirest.Response {
 		log.Error(err)
 		return apirest.Error{
 			Title:      errorTitle,
-			Message:    "No fue posible actualizar el secret key del usuario",
-			ErrorCode:  "5",
-			StatusCode: http.StatusInternalServerError,
+			Message:    "Credenciales inválidas",
+			ErrorCode:  "2",
+			StatusCode: http.StatusUnauthorized,
 		}
 	}
 	valid, err := security.ValidateSecurePassword(request.Password, user.Password)
@@ -181,6 +172,15 @@ func resetSecret(request resetClientSecretRequest) apirest.Response {
 			StatusCode: http.StatusUnauthorized,
 		}
 	}
+	if request.SecretKey != user.CurrentSecretKey {
+		return apirest.Error{
+			Title:      errorTitle,
+			Message:    "Credenciales inválidas",
+			ErrorCode:  "2",
+			StatusCode: http.StatusUnauthorized,
+		}
+	}
+
 	secretKey, err := security.GenerateSecretKey(user.Email, user.ClientID, request.SecretKey, defaultSecretExpire)
 	if err != nil {
 		log.Error(err)

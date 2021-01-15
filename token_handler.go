@@ -50,5 +50,9 @@ func generateTokenHandler(w http.ResponseWriter, r *http.Request) {
 		response.Send(w)
 		return
 	}
-
+	apirest.Error{
+		Title:      apirest.DefaultUnauthorizedTitle,
+		Message:    "garant_type no soportado",
+		StatusCode: http.StatusBadRequest,
+	}.Send(w)
 }

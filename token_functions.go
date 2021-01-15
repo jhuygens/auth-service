@@ -106,7 +106,7 @@ func validateRefreshToken(clientID, token string) apirest.Response {
 			Title:      errorTitle,
 			Message:    "No es posible actualizar el token",
 			ErrorCode:  "5",
-			StatusCode: http.StatusInternalServerError,
+			StatusCode: http.StatusUnauthorized,
 		}
 	}
 	if token != user.RefreshToken {
