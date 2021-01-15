@@ -8,5 +8,5 @@ require (
 	github.com/jgolang/config v1.0.0
 	github.com/jgolang/log v1.2.3
 	github.com/jhuygens/db/users v0.0.0-20210115041617-00ef66a1b1af
-	github.com/jhuygens/security v0.0.0-20210114103604-17cc5c3ed3f9
+	github.com/jhuygens/security v0.0.0-20210115042426-0103b1d775a9
 )

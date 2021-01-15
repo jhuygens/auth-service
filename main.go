@@ -8,6 +8,7 @@ import (
 	"github.com/jgolang/apirest"
 	"github.com/jgolang/config"
 	"github.com/jgolang/log"
+	"github.com/jhuygens/security"
 )
 
 const emaiFormatlLayout = `^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`
@@ -20,7 +21,7 @@ var (
 func main() {
 	router := mux.NewRouter()
 	port := config.GetInt("services.auth.port")
-	apirest.CustomTokenValidatorFunc = validateAccessTokenFunc
+	apirest.CustomTokenValidatorFunc = security.ValidateAccessTokenFunc
 	apirest.ValidateBasicAuthCredentialsFunc = validateBasicAuthCredentials
 	noAuthMiddlewares := apirest.MiddlewaresChain(apirest.ContentExtractor)
 	tokenAuthMiddlewares := apirest.MiddlewaresChain(apirest.ContentExtractor, apirest.CustomToken)
