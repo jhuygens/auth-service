@@ -7,9 +7,9 @@ RUN env GOOS=linux GOARCH=386 go build -o main .
 
 FROM alpine:latest
 
-RUN mkdir -p /app && adduser -S -D -H -h /app appuser && chown -R appuser /app
+RUN mkdir -p /app && adduser -S -D -H -h /app miku && chown -R miku /app
 COPY --from=builder /build/main /app/
-USER appuser
+USER miku
 EXPOSE 9091
 WORKDIR /app
 CMD ["./main"]
