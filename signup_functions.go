@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"regexp"
 
 	"github.com/jgolang/apirest"
@@ -9,7 +10,7 @@ import (
 	"github.com/jhuygens/security"
 )
 
-func validateRequestValuesFormat(request signUpRequest) apirest.Response {
+func validateRequestSignUpValuesFormat(request signUpRequest) apirest.Response {
 	errorTitle := "Parametro inválido"
 	if !validateEmailFormat(request.Email) {
 		return apirest.Error{
@@ -39,8 +40,7 @@ func validateRequestValuesFormat(request signUpRequest) apirest.Response {
 }
 
 func validateEmailFormat(email string) bool {
-	emailLayout := `^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`
-	validID := regexp.MustCompile(emailLayout)
+	validID := regexp.MustCompile(emaiFormatlLayout)
 	return validID.MatchString(email)
 }
 
@@ -57,9 +57,10 @@ func validateUserCreated(email string) apirest.Response {
 	if err != nil {
 		log.Error(err)
 		return apirest.Error{
-			Title:     errorTitle,
-			Message:   "No es posible registrar al usuario en estos momentos, por favor intenta más tarde",
-			ErrorCode: "2",
+			Title:      errorTitle,
+			Message:    "No es posible registrar al usuario en estos momentos, por favor intenta más tarde",
+			ErrorCode:  "5",
+			StatusCode: http.StatusInternalServerError,
 		}
 	}
 	if user.ID != 0 {
@@ -111,9 +112,10 @@ func signUp(request signUpRequest) apirest.Response {
 	if err != nil {
 		log.Error(err)
 		return apirest.Error{
-			Title:     errorTitle,
-			Message:   "No fue posible registrar al usuario",
-			ErrorCode: "1",
+			Title:      errorTitle,
+			Message:    "No fue posible registrar al usuario",
+			ErrorCode:  "5",
+			StatusCode: http.StatusInternalServerError,
 		}
 	}
 	return apirest.Success{
@@ -121,6 +123,88 @@ func signUp(request signUpRequest) apirest.Response {
 		Message: "El usuario ha sido registrado correctamente",
 		Data: signUpResponse{
 			ClientID:  clientID,
+			SecretKey: secretKey,
+		},
+	}
+}
+
+func validateRequestResetSecretValuesFormat(request resetClientSecretRequest) apirest.Response {
+	errorTitle := "Parametro inválido"
+	if request.ClientID == "" {
+		return apirest.Error{
+			Title:   errorTitle,
+			Message: "Ingresa una su client Id",
+		}
+	}
+	if request.SecretKey == "" {
+		return apirest.Error{
+			Title:   errorTitle,
+			Message: "Ingresa una su secret Key",
+		}
+	}
+	if request.Password == "" {
+		return apirest.Error{
+			Title:   errorTitle,
+			Message: "Ingresa una su contraseña",
+		}
+	}
+	return nil
+}
+
+func resetSecret(request resetClientSecretRequest) apirest.Response {
+	errorTitle := "Secret key no actualizado"
+	user, err := users.GetByClientID(request.ClientID)
+	if err != nil {
+		log.Error(err)
+		return apirest.Error{
+			Title:      errorTitle,
+			Message:    "No fue posible actualizar el secret key del usuario",
+			ErrorCode:  "5",
+			StatusCode: http.StatusInternalServerError,
+		}
+	}
+	valid, err := security.ValidateSecurePassword(request.Password, user.Password)
+	if err != nil {
+		log.Error(err)
+		return apirest.Error{
+			Title:      errorTitle,
+			Message:    "Credenciales inválidas",
+			ErrorCode:  "2",
+			StatusCode: http.StatusUnauthorized,
+		}
+	}
+	if !valid {
+		return apirest.Error{
+			Title:      errorTitle,
+			Message:    "Credenciales inválidas",
+			ErrorCode:  "2",
+			StatusCode: http.StatusUnauthorized,
+		}
+	}
+	secretKey, err := security.GenerateSecretKey(user.Email, user.ClientID, request.SecretKey, defaultSecretExpire)
+	if err != nil {
+		log.Error(err)
+		return apirest.Error{
+			Title:     errorTitle,
+			Message:   "No fue posible generar el id del usuario",
+			ErrorCode: "2",
+		}
+	}
+	err = users.UpdateCurrentSecretKey(user.ClientID, secretKey)
+	if err != nil {
+		log.Error(err)
+		return apirest.Error{
+			Title:      errorTitle,
+			Message:    "No fue posible generar el id del usuario",
+			ErrorCode:  "5",
+			StatusCode: http.StatusInternalServerError,
+		}
+	}
+	return apirest.Success{
+		Title:   "¡Usuario registrado!",
+		Message: "El secret actualizado correctamente",
+		Data: resetClientSecretResponse{
+			ClientID:  user.ClientID,
 			SecretKey: secretKey,
 		},
 	}

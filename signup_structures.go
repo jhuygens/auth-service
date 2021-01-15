@@ -11,3 +11,14 @@ type signUpResponse struct {
 	ClientID  string `json:"client_id"`
 	SecretKey string `json:"secret_key"`
 }
+
+type resetClientSecretRequest struct {
+	ClientID  string `json:"client_id"`
+	SecretKey string `json:"secret_key"`
+	Password  string `json:"password"`
+}
+
+type resetClientSecretResponse struct {
+	ClientID  string `json:"client_id"`
+	SecretKey string `json:"secret_key"`
+}
