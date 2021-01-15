@@ -12,7 +12,7 @@ require (
 	github.com/jgolang/log/core v0.0.0-20210114183944-2dfd1412e7a3 // indirect
 	github.com/jhuygens/db-mongodb/users v0.0.0-20210115072614-05b4d2126f12
 	github.com/jhuygens/db/users v0.0.0-20210115041617-00ef66a1b1af
-	github.com/jhuygens/security v0.0.0-20210115042426-0103b1d775a9
+	github.com/jhuygens/security v0.0.0-20210115104919-7fdc313b58c5
 	github.com/klauspost/compress v1.11.7 // indirect
 	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a // indirect
 	golang.org/x/text v0.3.5 // indirect

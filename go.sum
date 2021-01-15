@@ -60,8 +60,8 @@ github.com/jhuygens/db-mongodb/users v0.0.0-20210115072614-05b4d2126f12 h1:F9HCc
 github.com/jhuygens/db-mongodb/users v0.0.0-20210115072614-05b4d2126f12/go.mod h1:Hf0/WKOjQofA2wN0wo1gNJ5Jtqk0ovTGgd7N4PTCIwk=
 github.com/jhuygens/db/users v0.0.0-20210115041617-00ef66a1b1af h1:CTLzhQE5C+5ZgxwGvMSVfCCi5UvU73bsA3kY/tL7yM8=
 github.com/jhuygens/db/users v0.0.0-20210115041617-00ef66a1b1af/go.mod h1:WomUl3NV/GoajrzSJnY+v6WEDz/WRrj7lnKJReWKYdI=
-github.com/jhuygens/security v0.0.0-20210115042426-0103b1d775a9 h1:Tw7KfAtjikEmJM3fyQTWf1S8uNVpORhbiMGSmrkS7Kg=
-github.com/jhuygens/security v0.0.0-20210115042426-0103b1d775a9/go.mod h1:7jTUpDpmE8pSRGQ/nBH9ob/rMQlSGmFHopEOpAYjMIE=
+github.com/jhuygens/security v0.0.0-20210115104919-7fdc313b58c5 h1:pnxiYy47ylYwJ1ouq+FOxT2ARjDc6Cu7MreuwZeGKt8=
+github.com/jhuygens/security v0.0.0-20210115104919-7fdc313b58c5/go.mod h1:7jTUpDpmE8pSRGQ/nBH9ob/rMQlSGmFHopEOpAYjMIE=
 github.com/jmespath/go-jmespath v0.4.0 h1:BEgLn5cpjn8UN1mAw4NjwDrS35OdebyEtFe+9YPoQUg=
 github.com/jmespath/go-jmespath v0.4.0/go.mod h1:T8mJZnbsbmF+m6zOOFylbeCJqk5+pHWvzYPziyZiYoo=
 github.com/jmespath/go-jmespath/internal/testify v1.5.1 h1:shLQSRRSCCPj3f2gpwzGwWFoC7ycTf1rcQZHOlsJ6N8=
