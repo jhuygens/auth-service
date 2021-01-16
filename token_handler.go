@@ -4,33 +4,33 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/jgolang/apirest"
+	"github.com/jgolang/api"
 )
 
 func generateTokenHandler(w http.ResponseWriter, r *http.Request) {
 	var request tokenRequest
-	response := apirest.UnmarshalBody(&request, r)
+	response := api.UnmarshalBody(&request, r)
 	if response != nil {
 		response.Send(w)
 		return
 	}
 
 	if request.GarantType == "authorization_code" {
-		auth, response := apirest.GetHeaderValueString("Authorization", r)
+		auth, response := api.GetHeaderValueString("Authorization", r)
 		values := strings.SplitN(auth, " ", 2)
 		if len(values) != 2 || values[0] != "Basic" {
-			apirest.Error{
-				Title:      apirest.DefaultUnauthorizedTitle,
-				Message:    apirest.DefaultInvalidAuthHeaderMsg,
+			api.Error{
+				Title:      api.DefaultUnauthorizedTitle,
+				Message:    api.DefaultInvalidAuthHeaderMsg,
 				StatusCode: http.StatusUnauthorized,
 			}.Send(w)
 			return
 		}
-		clientID, secretKey, valid := apirest.ValidateBasicToken(values[1])
+		clientID, secretKey, valid := api.ValidateBasicToken(values[1])
 		if !valid {
-			apirest.Error{
-				Title:      apirest.DefaultUnauthorizedTitle,
-				Message:    apirest.DefaultBasicUnauthorizedMsg,
+			api.Error{
+				Title:      api.DefaultUnauthorizedTitle,
+				Message:    api.DefaultBasicUnauthorizedMsg,
 				StatusCode: http.StatusUnauthorized,
 			}.Send(w)
 			return
@@ -50,8 +50,8 @@ func generateTokenHandler(w http.ResponseWriter, r *http.Request) {
 		response.Send(w)
 		return
 	}
-	apirest.Error{
-		Title:      apirest.DefaultUnauthorizedTitle,
+	api.Error{
+		Title:      api.DefaultUnauthorizedTitle,
 		Message:    "garant_type no soportado",
 		StatusCode: http.StatusBadRequest,
 	}.Send(w)

@@ -4,34 +4,34 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/jgolang/apirest"
+	"github.com/jgolang/api"
 	"github.com/jgolang/log"
 	"github.com/jhuygens/db/users"
 	"github.com/jhuygens/security"
 )
 
-func validateRequestSignUpValuesFormat(request signUpRequest) apirest.Response {
+func validateRequestSignUpValuesFormat(request signUpRequest) api.Response {
 	errorTitle := "Parametro inválido"
 	if !validateEmailFormat(request.Email) {
-		return apirest.Error{
+		return api.Error{
 			Title:   errorTitle,
 			Message: "Ingresa una dirección de correo electrónico válida",
 		}
 	}
 	if !validatePasswordFormat(request.Password) {
-		return apirest.Error{
+		return api.Error{
 			Title:   errorTitle,
 			Message: "Tu contraseña debe tener al menos 6 caracteres",
 		}
 	}
 	if request.AppName == "" {
-		return apirest.Error{
+		return api.Error{
 			Title:   errorTitle,
 			Message: "Debes ingresar el nombre de tu applicación",
 		}
 	}
 	if len(request.AppName) < 6 {
-		return apirest.Error{
+		return api.Error{
 			Title:   errorTitle,
 			Message: "El nombre de tu applicación debe tener al menos 6 caracteres",
 		}
@@ -51,11 +51,11 @@ func validatePasswordFormat(password string) bool {
 	return true
 }
 
-func validateUserCreated(email string) apirest.Response {
+func validateUserCreated(email string) api.Response {
 	errorTitle := "Usuario no registrado"
 	user, _ := users.GetByEmail(email)
 	if user != nil {
-		return apirest.Error{
+		return api.Error{
 			Title:   errorTitle,
 			Message: "Ya existe un usuario registrado con ese correo electronico",
 		}
@@ -63,12 +63,12 @@ func validateUserCreated(email string) apirest.Response {
 	return nil
 }
 
-func signUp(request signUpRequest) apirest.Response {
+func signUp(request signUpRequest) api.Response {
 	errorTitle := "Usuario no registrado"
 	securePassword, err := security.GenerateSecurePassword(request.Password)
 	if err != nil {
 		log.Error(err)
-		return apirest.Error{
+		return api.Error{
 			Title:     errorTitle,
 			Message:   "No se ha podido generar una contraseña para el usuario",
 			ErrorCode: "2",
@@ -78,7 +78,7 @@ func signUp(request signUpRequest) apirest.Response {
 	secretKey, err := security.GenerateSecretKey(request.Email, clientID, securePassword, defaultSecretExpire)
 	if err != nil {
 		log.Error(err)
-		return apirest.Error{
+		return api.Error{
 			Title:     errorTitle,
 			Message:   "No fue posible generar el id del usuario",
 			ErrorCode: "2",
@@ -102,14 +102,14 @@ func signUp(request signUpRequest) apirest.Response {
 	err = users.Save(user)
 	if err != nil {
 		log.Error(err)
-		return apirest.Error{
+		return api.Error{
 			Title:      errorTitle,
 			Message:    "No fue posible registrar al usuario",
 			ErrorCode:  "5",
 			StatusCode: http.StatusInternalServerError,
 		}
 	}
-	return apirest.Success{
+	return api.Success{
 		Title:   "¡Usuario registrado!",
 		Message: "El usuario ha sido registrado correctamente",
 		Data: signUpResponse{
@@ -119,22 +119,22 @@ func signUp(request signUpRequest) apirest.Response {
 	}
 }
 
-func validateRequestResetSecretValuesFormat(request resetClientSecretRequest) apirest.Response {
+func validateRequestResetSecretValuesFormat(request resetClientSecretRequest) api.Response {
 	errorTitle := "Parametro inválido"
 	if request.ClientID == "" {
-		return apirest.Error{
+		return api.Error{
 			Title:   errorTitle,
 			Message: "Ingresa una su client Id",
 		}
 	}
 	if request.SecretKey == "" {
-		return apirest.Error{
+		return api.Error{
 			Title:   errorTitle,
 			Message: "Ingresa una su secret Key",
 		}
 	}
 	if request.Password == "" {
-		return apirest.Error{
+		return api.Error{
 			Title:   errorTitle,
 			Message: "Ingresa una su contraseña",
 		}
@@ -142,12 +142,12 @@ func validateRequestResetSecretValuesFormat(request resetClientSecretRequest) ap
 	return nil
 }
 
-func resetSecret(request resetClientSecretRequest) apirest.Response {
+func resetSecret(request resetClientSecretRequest) api.Response {
 	errorTitle := "Secret key no actualizado"
 	user, err := users.GetByClientID(request.ClientID)
 	if err != nil {
 		log.Error(err)
-		return apirest.Error{
+		return api.Error{
 			Title:      errorTitle,
 			Message:    "Credenciales inválidas",
 			ErrorCode:  "2",
@@ -157,7 +157,7 @@ func resetSecret(request resetClientSecretRequest) apirest.Response {
 	valid, err := security.ValidateSecurePassword(request.Password, user.Password)
 	if err != nil {
 		log.Error(err)
-		return apirest.Error{
+		return api.Error{
 			Title:      errorTitle,
 			Message:    "Credenciales inválidas",
 			ErrorCode:  "2",
@@ -165,7 +165,7 @@ func resetSecret(request resetClientSecretRequest) apirest.Response {
 		}
 	}
 	if !valid {
-		return apirest.Error{
+		return api.Error{
 			Title:      errorTitle,
 			Message:    "Credenciales inválidas",
 			ErrorCode:  "2",
@@ -173,7 +173,7 @@ func resetSecret(request resetClientSecretRequest) apirest.Response {
 		}
 	}
 	if request.SecretKey != user.CurrentSecretKey {
-		return apirest.Error{
+		return api.Error{
 			Title:      errorTitle,
 			Message:    "Credenciales inválidas",
 			ErrorCode:  "2",
@@ -184,7 +184,7 @@ func resetSecret(request resetClientSecretRequest) apirest.Response {
 	secretKey, err := security.GenerateSecretKey(user.Email, user.ClientID, request.SecretKey, defaultSecretExpire)
 	if err != nil {
 		log.Error(err)
-		return apirest.Error{
+		return api.Error{
 			Title:     errorTitle,
 			Message:   "No fue posible generar el id del usuario",
 			ErrorCode: "2",
@@ -193,14 +193,14 @@ func resetSecret(request resetClientSecretRequest) apirest.Response {
 	err = users.UpdateCurrentSecretKey(user.ClientID, secretKey)
 	if err != nil {
 		log.Error(err)
-		return apirest.Error{
+		return api.Error{
 			Title:      errorTitle,
 			Message:    "No fue posible generar el id del usuario",
 			ErrorCode:  "5",
 			StatusCode: http.StatusInternalServerError,
 		}
 	}
-	return apirest.Success{
+	return api.Success{
 		Title:   "¡Usuario registrado!",
 		Message: "El secret actualizado correctamente",
 		Data: resetClientSecretResponse{

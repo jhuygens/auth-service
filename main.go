@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/jgolang/apirest"
+	"github.com/jgolang/api"
 	"github.com/jgolang/config"
 	"github.com/jgolang/log"
 	_ "github.com/jhuygens/db-mongodb/users"
@@ -24,10 +24,10 @@ func main() {
 	log.Info(config.GetString("database.collections.users"))
 	router := mux.NewRouter()
 	port := config.GetInt("services.auth.port")
-	apirest.CustomTokenValidatorFunc = security.ValidateAccessTokenFunc
-	apirest.ValidateBasicAuthCredentialsFunc = validateBasicAuthCredentials
-	noAuthMiddlewares := apirest.MiddlewaresChain(apirest.ContentExtractor)
-	tokenAuthMiddlewares := apirest.MiddlewaresChain(apirest.ContentExtractor, apirest.CustomToken)
+	api.CustomTokenValidatorFunc = security.ValidateAccessTokenFunc
+	api.ValidateBasicAuthCredentialsFunc = validateBasicAuthCredentials
+	noAuthMiddlewares := api.MiddlewaresChain(api.ContentExtractor)
+	tokenAuthMiddlewares := api.MiddlewaresChain(api.ContentExtractor, api.CustomToken)
 
 	router.HandleFunc("/v1/signup", noAuthMiddlewares(signUpHandler)).Methods(http.MethodPost)
 	router.HandleFunc("/v1/reset_secret", tokenAuthMiddlewares(resetSecretHandler)).Methods(http.MethodPost)

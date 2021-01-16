@@ -5,16 +5,16 @@ import (
 
 	"github.com/jhuygens/db/users"
 
-	"github.com/jgolang/apirest"
+	"github.com/jgolang/api"
 	"github.com/jgolang/log"
 	"github.com/jhuygens/security"
 )
 
-func generateToken(clientID, secretID string) apirest.Response {
+func generateToken(clientID, secretID string) api.Response {
 	errorTitle := "No autorizado"
 	token, err := security.GenerateAccessToken(clientID, secretID, defaultTokenExpire)
 	if err != nil {
-		return apirest.Error{
+		return api.Error{
 			Title:     errorTitle,
 			Message:   "No se ha podido general el token",
 			ErrorCode: "2",
@@ -22,7 +22,7 @@ func generateToken(clientID, secretID string) apirest.Response {
 	}
 	refreshToken, err := security.GenerateAccessToken(clientID, token, defaultTokenExpire)
 	if err != nil {
-		return apirest.Error{
+		return api.Error{
 			Title:     errorTitle,
 			Message:   "No se ha podido generar el token",
 			ErrorCode: "2",
@@ -31,14 +31,14 @@ func generateToken(clientID, secretID string) apirest.Response {
 	err = users.UpdateToken(clientID, token, refreshToken)
 	if err != nil {
 		log.Error(err)
-		return apirest.Error{
+		return api.Error{
 			Title:      errorTitle,
 			Message:    "No es posible actualizar el token",
 			ErrorCode:  "5",
 			StatusCode: http.StatusInternalServerError,
 		}
 	}
-	return apirest.Success{
+	return api.Success{
 		Title:   "Token autorizado!",
 		Message: "Se ha generado correctamente el token",
 		Data: tokenResponse{
@@ -50,11 +50,11 @@ func generateToken(clientID, secretID string) apirest.Response {
 	}
 }
 
-func refreshToken(request tokenRequest) apirest.Response {
+func refreshToken(request tokenRequest) api.Response {
 	errorTitle := "No autorizado"
 	token, err := security.GenerateAccessToken(request.ClientID, request.RefreshToken, defaultTokenExpire)
 	if err != nil {
-		return apirest.Error{
+		return api.Error{
 			Title:     errorTitle,
 			Message:   "No se ha podido generar el token",
 			ErrorCode: "2",
@@ -62,7 +62,7 @@ func refreshToken(request tokenRequest) apirest.Response {
 	}
 	refreshToken, err := security.GenerateAccessToken(request.ClientID, token, defaultTokenExpire)
 	if err != nil {
-		return apirest.Error{
+		return api.Error{
 			Title:     errorTitle,
 			Message:   "No se ha podido generar el token",
 			ErrorCode: "2",
@@ -71,14 +71,14 @@ func refreshToken(request tokenRequest) apirest.Response {
 	err = users.UpdateToken(request.ClientID, token, refreshToken)
 	if err != nil {
 		log.Error(err)
-		return apirest.Error{
+		return api.Error{
 			Title:      errorTitle,
 			Message:    "No es posible actualizar el token",
 			ErrorCode:  "5",
 			StatusCode: http.StatusInternalServerError,
 		}
 	}
-	return apirest.Success{
+	return api.Success{
 		Title:   "Token autorizado!",
 		Message: "Se ha refrescado correctamente el token",
 		Data: tokenResponse{
@@ -90,11 +90,11 @@ func refreshToken(request tokenRequest) apirest.Response {
 	}
 }
 
-func validateRefreshToken(clientID, token string) apirest.Response {
+func validateRefreshToken(clientID, token string) api.Response {
 	errorTitle := "No autorizado"
 	if token == "" {
-		return apirest.Error{
-			Title:      apirest.DefaultUnauthorizedTitle,
+		return api.Error{
+			Title:      api.DefaultUnauthorizedTitle,
 			Message:    "Token de refresco inválido",
 			StatusCode: http.StatusUnauthorized,
 		}
@@ -102,7 +102,7 @@ func validateRefreshToken(clientID, token string) apirest.Response {
 	user, err := users.GetByClientID(clientID)
 	if err != nil {
 		log.Error(err)
-		return apirest.Error{
+		return api.Error{
 			Title:      errorTitle,
 			Message:    "No es posible actualizar el token",
 			ErrorCode:  "5",
@@ -110,7 +110,7 @@ func validateRefreshToken(clientID, token string) apirest.Response {
 		}
 	}
 	if token != user.RefreshToken {
-		return apirest.Error{
+		return api.Error{
 			Title:      errorTitle,
 			Message:    "Token de refresco inválido",
 			StatusCode: http.StatusUnauthorized,

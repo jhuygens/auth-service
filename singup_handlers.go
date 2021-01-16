@@ -3,12 +3,12 @@ package main
 import (
 	"net/http"
 
-	"github.com/jgolang/apirest"
+	"github.com/jgolang/api"
 )
 
 func signUpHandler(w http.ResponseWriter, r *http.Request) {
 	var request signUpRequest
-	response := apirest.UnmarshalBody(&request, r)
+	response := api.UnmarshalBody(&request, r)
 	if response != nil {
 		response.Send(w)
 		return
@@ -30,7 +30,7 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 
 func resetSecretHandler(w http.ResponseWriter, r *http.Request) {
 	var request resetClientSecretRequest
-	response := apirest.UnmarshalBody(&request, r)
+	response := api.UnmarshalBody(&request, r)
 	if response != nil {
 		response.Send(w)
 		return
