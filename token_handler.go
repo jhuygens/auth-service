@@ -11,7 +11,7 @@ func generateTokenHandler(w http.ResponseWriter, r *http.Request) {
 	var request tokenRequest
 	response := api.UnmarshalBody(&request, r)
 	if response != nil {
-		response.Send(w)
+		response.Write(w)
 		return
 	}
 
@@ -23,7 +23,7 @@ func generateTokenHandler(w http.ResponseWriter, r *http.Request) {
 				Title:      api.DefaultUnauthorizedTitle,
 				Message:    api.DefaultInvalidAuthHeaderMsg,
 				StatusCode: http.StatusUnauthorized,
-			}.Send(w)
+			}.Write(w)
 			return
 		}
 		clientID, secretKey, valid := api.ValidateBasicToken(values[1])
@@ -32,27 +32,27 @@ func generateTokenHandler(w http.ResponseWriter, r *http.Request) {
 				Title:      api.DefaultUnauthorizedTitle,
 				Message:    api.DefaultBasicUnauthorizedMsg,
 				StatusCode: http.StatusUnauthorized,
-			}.Send(w)
+			}.Write(w)
 			return
 		}
 		response = generateToken(clientID, secretKey)
-		response.Send(w)
+		response.Write(w)
 		return
 	}
 
 	if request.GarantType == "refresh_token" {
 		response := validateRefreshToken(request.ClientID, request.RefreshToken)
 		if response != nil {
-			response.Send(w)
+			response.Write(w)
 			return
 		}
 		response = refreshToken(request)
-		response.Send(w)
+		response.Write(w)
 		return
 	}
 	api.Error{
 		Title:      api.DefaultUnauthorizedTitle,
 		Message:    "garant_type no soportado",
 		StatusCode: http.StatusBadRequest,
-	}.Send(w)
+	}.Write(w)
 }
