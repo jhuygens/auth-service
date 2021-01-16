@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/gorilla/mux v1.8.0
-	github.com/jgolang/api v0.0.0-20210116070414-18aaf4aa4be4
+	github.com/jgolang/api v0.0.0-20210116072351-533b3a7a3b08
 	github.com/jgolang/config v1.0.0
 	github.com/jgolang/log v1.2.4
 	github.com/jhuygens/db v0.0.0-20210116054352-5347f276ba0f
