@@ -40,7 +40,7 @@ func validateRequestSignUpValuesFormat(request signUpRequest) api.Response {
 }
 
 func validateEmailFormat(email string) bool {
-	validID := regexp.MustCompile(emaiFormatlLayout)
+	validID := regexp.MustCompile(emailFormatLayout)
 	return validID.MatchString(email)
 }
 

@@ -40,8 +40,8 @@ github.com/google/go-cmp v0.5.2/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
 github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
 github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
-github.com/jgolang/api v0.0.0-20210116072351-533b3a7a3b08 h1:06bCRLTaSTXaSs/t+qWl/0+MaFPjgmzOX9cll3Y9pOs=
-github.com/jgolang/api v0.0.0-20210116072351-533b3a7a3b08/go.mod h1:PW3GdLZ3pru+o8dxjFKe1If5AxVciD3uxpIbfOO5ZOw=
+github.com/jgolang/api v0.0.0-20210116095319-bd08d060b81f h1:DBf40qal1xhDrHjaUOIZvgv3tePeFFXk1k6RnMmXM6k=
+github.com/jgolang/api v0.0.0-20210116095319-bd08d060b81f/go.mod h1:oEx0UXDfrTZ5o6gYm3Lu+6r/dIflqzwchGGdu663zfM=
 github.com/jgolang/config v1.0.0 h1:82b+PKhukzD3QXubdwO5kzEg+maC0IpCM22aJJfunXo=
 github.com/jgolang/config v1.0.0/go.mod h1:dk4Mr3XN9DO82mr9PrvBxBTpWhb+ii3kOTwEZsYcDUU=
 github.com/jgolang/log v1.2.4 h1:8jQZEvlWmm3c2MMZH39gK2jOOmLyvMDQyBoca4m9UGo=

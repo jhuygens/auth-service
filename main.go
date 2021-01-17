@@ -12,16 +12,22 @@ import (
 	"github.com/jhuygens/security"
 )
 
-const emaiFormatlLayout = `^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`
+const emailFormatLayout = `^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`
 
 var (
 	defaultSecretExpire = config.GetInt("general.default_secret_expire")
 	defaultTokenExpire  = config.GetInt("general.default_token_expire")
 )
 
+func init() {
+	// Api package custom config
+	api.CustomTokenValidatorFunc = security.ValidateAccessTokenFunc
+	api.Print = log.Printf
+	api.PrintError = log.Error
+	api.Fatal = log.Fatal
+}
+
 func main() {
-	log.Info(config.GetString("database.name"))
-	log.Info(config.GetString("database.collections.users"))
 	router := mux.NewRouter()
 	port := config.GetInt("services.auth.port")
 	api.CustomTokenValidatorFunc = security.ValidateAccessTokenFunc
@@ -33,7 +39,7 @@ func main() {
 	router.HandleFunc("/v1/reset_secret", tokenAuthMiddlewares(resetSecretHandler)).Methods(http.MethodPost)
 	router.HandleFunc("/v1/token", noAuthMiddlewares(generateTokenHandler)).Methods(http.MethodPost)
 
-	log.Info("Starting server, lisen on port: ", port)
+	log.Info("Starting server, listen on port: ", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%v", port), router); err != nil {
 		log.Panic(err)
 	}
